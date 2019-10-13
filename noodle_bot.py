@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from telegram_bot import TelegramBot
 from urllib import request, parse
 from datetime import date
@@ -31,7 +34,7 @@ def make_reply(msg):
             if not noodles_available:
                 reply += parse.quote(rand.choice(no_noodles_messages))
         else:
-            reply = "Wer geht am Wochenende schon zur Mensa?"
+            reply = "Wer+geht+am+Wochenende+schon+zur+Mensa?"
     return reply
 
 
