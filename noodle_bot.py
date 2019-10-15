@@ -7,11 +7,10 @@ from datetime import date
 import json
 import random
 
-dishes_url = "https://www.studentenwerk-potsdam.de//essen/unsere-mensen-cafeterien/detailinfos" \
-             "/?tx_typoscriptrendering%5Bcontext%5D=%7B%22record%22%3A%22pages_66%22%2C%22path%22%3A%22tt_content" \
-             ".list.20.ddfmensa_ddfmensajson%22%7D&tx_ddfmensa_ddfmensajson%5Bmensa%5D=4&cHash" \
-             "=b14a1168346e0b7db67da056660d3a0e "
-noodles_available = False
+dishes_url = "https://www.studentenwerk-potsdam.de/essen/unsere-mensen-cafeterien/detailinfos/?tx_typoscriptrendering" \
+             "%5Bcontext%5D=%7B%22record%22%3A%22pages_66%22%2C%22path%22%3A%22tt_content.list.20" \
+             ".ddfmensa_ddfmensajson%22%7D&tx_ddfmensa_ddfmensajson%5Bmensa%5D=6&cHash" \
+             "=0c7f1095dcc78ff74b6cd32cd231c75f "
 no_noodles_messages = ["Keine Nudeln... Wieso?!", "Mensa ohne Nudeln ist wie GdS ohne Wollowski!", "Schon wieder ein "
                                                                                                    "nudelfreier -> "
                                                                                                    "verlorener Tag.",
@@ -27,22 +26,25 @@ def make_reply(msg):
     if msg == "/noodle":
         if date.today().weekday() < 5:
             today = date.today().strftime("%d.%m.%Y")
+            noodles_available = False
             reply = "Angebote+der+Mensa+f%C3%BCr+den+" + str(today) + ":%0A%0A"
             all_dishes = get_todays_dishes()
             for offer in all_dishes:
-                reply += get_todays_offer(offer) + "%0A"
+                offer_msg, noodles = get_todays_offer(offer)
+                reply += offer_msg + "%0A"
+                noodles_available |= noodles
             if not noodles_available:
-                reply += parse.quote(rand.choice(no_noodles_messages))
+                reply += "%0A" + parse.quote(rand.choice(no_noodles_messages))
         else:
             reply = "Wer+geht+am+Wochenende+schon+zur+Mensa?"
     return reply
 
 
-def get_todays_offer(offer):  # noodles_available = True if corresponding title
+def get_todays_offer(offer):
     title = offer["titel"]
     dish = offer["beschreibung"]
     price = offer["preis_s"]
-    return parse.quote(f"{title}: {dish} (€{price})")
+    return parse.quote(f"{title}: {dish} (€{price})"), title == "Nudeltheke"
 
 
 def get_todays_dishes():
@@ -52,7 +54,6 @@ def get_todays_dishes():
 
 
 while True:
-    noodles_available = False
     updates = bot.get_updates(offset=update_id)
     updates = updates["result"]
     if updates:
