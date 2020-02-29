@@ -5,4 +5,4 @@ telegram username: @noodle_up_bot
 
 ## commands
 
-- /noodles : Get an overview of all today's dishes
+- /noodles : Get an overview of all today's dishes (not only noodles ;))

@@ -23,7 +23,7 @@ class TelegramBot:
         url = self.base + f"getUpdates?timeout={self.timeout}"
         if offset:
             url = url + f"&offset={offset + 1}"
-        print(url)
+        # print(url)
         r = request.urlopen(url).read().decode("utf-8")
         return json.loads(r)
 
